@@ -414,7 +414,6 @@ exports['unpatched module'] = function (test) {
     });
 };
 
-
 exports['semver with -rcsomething'] = function (test) {
     server.inject({
         method: 'POST',
@@ -429,6 +428,32 @@ exports['semver with -rcsomething'] = function (test) {
         test.ok(payload[0].module, 'should have a module key');
         test.ok(payload[0].version, 'should have a version key');
         test.ok(payload[0].advisory, 'show have an advisory key');
+        test.done();
+    });
+};
+
+exports['all existing advisories'] = function (test) {
+    server.inject({
+        method: 'GET',
+        url: '/api/v1/advisories'
+    }, function (res) {
+        var payload;
+        test.equal(res.statusCode, '200', 'should return a 200');
+        test.doesNotThrow(function () {payload = JSON.parse(res.payload); });
+        test.notEqual(payload.length, 0);
+        test.done();
+    });
+};
+
+exports['all existing advisories since queryparam'] = function (test) {
+    server.inject({
+        method: 'GET',
+        url: '/api/v1/advisories?since=1420470621102'
+    }, function (res) {
+        var payload;
+        test.equal(res.statusCode, '200', 'should return a 200');
+        test.doesNotThrow(function () {payload = JSON.parse(res.payload); });
+        test.notEqual(payload.length, 0);
         test.done();
     });
 };
