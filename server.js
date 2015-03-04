@@ -1,5 +1,6 @@
 var Hapi = require('hapi');
 var config = require('config');
+// var apiV1 = require('./api/api_v1');
 
 // Create a server with a host and port
 var server = new Hapi.Server(config.hapi.options);
@@ -11,6 +12,8 @@ server.views({
     },
     path: './views'
 });
+
+// server.route(apiV1);
 
 server.route({
     method: 'GET',
