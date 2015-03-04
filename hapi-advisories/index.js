@@ -189,6 +189,9 @@ exports.register = function (plugin, options, next) {
     });
 
     //API routes and handlers
+    //  Some of these are redundant to other areas above
+    //  that is so that there is a unified API for dealing with advisories
+    //  perhaps in the future the above could be superseded by these
     plugin.route({
         method: 'GET',
         path: '/api/v1/validate/{module}/{version}',
@@ -226,6 +229,19 @@ exports.register = function (plugin, options, next) {
                 //return all the advisories
                 reply(advisoriesArray);
             }
+        }
+    });
+
+    plugin.route({
+        method: 'POST',
+        path: '/api/v1/validate/shrinkwrap',
+        config: {
+            payload: {
+                allow: 'application/json'
+            }
+        },
+        handler: function (request, reply) {
+            reply(validate(request.payload, module_index));
         }
     });
 };
