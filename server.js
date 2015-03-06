@@ -22,6 +22,14 @@ server.route({
 
 server.route({
     method: 'GET',
+    path: '/api',
+    handler: {
+        view: 'api'
+    }
+});
+
+server.route({
+    method: 'GET',
     path: '/{path*}',
     handler: {
         directory: { path: './public', listing: false, index: true }
@@ -35,6 +43,7 @@ server.route({
         view: 'resources'
     }
 });
+
 
 server.register([
     {
