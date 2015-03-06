@@ -1,0 +1,52 @@
+extends layout
+block content
+  .content-container(role="main")
+    .container
+      .hero-unit.homepage
+        h2.text-left API v1 Documentation:
+        p
+          The base URL for the v1 api is /api/v1/. All of the documentation below is append to /api/v1/.
+
+        h3.text-left /api/v1/advisories 
+        p
+          This url returns all advisories if accessed without a ?since parameter. If you pass it ?since=epoch-time you will get only the advisories issued since the time you pass in.
+          Example Data:
+        pre.text-left
+          code
+            |[
+            |  {"meta":
+            |    {
+            |      "title":"marked regular expression denial of service",
+            |      "author":"Barış Soner Uşaklı",
+            |      "module_name":"marked",
+            |      "publish_date":"Thur Jan 22 2015 09:33:48 GMT-0800 (PST)",
+            |      "cves":[],
+            |      "vulnerable_versions":"<=0.3.3",
+            |      "patched_versions":"<0.0.0","url":"marked_redos"
+            |    },
+            |    "html":"&lt;h2 id=\&quot;overview\&quot;&gt;Overview&lt;/h2&gt;\n&lt;p&gt;Marked 0.3.3 and earlier is vulnerable to regular expression denial of service (ReDoS) when certain types of input are passed in to be parsed.&lt;/p&gt;\n&lt;p&gt;&amp;quot;The Regular expression Denial of Service (ReDoS) is a Denial of Service attack, that exploits the fact that most Regular Expression implementations may reach extreme situations that cause them to work very slowly (exponentially related to input size). An attacker can then cause a program using a Regular Expression to enter these extreme situations and then hang for a very long time.&amp;quot; [1]&lt;/p&gt;\n&lt;h2 id=\&quot;recommendation-\&quot;&gt;Recommendation:&lt;/h2&gt;\n&lt;p&gt;As there is no patch available we recommend switching to another markdown parser or if you are able, help out the project by submitting a patch.&lt;/p&gt;\n&lt;h2 id=\&quot;references-\&quot;&gt;References:&lt;/h2&gt;\n&lt;ul&gt;\n&lt;li&gt;[1] &lt;a href=\&quot;https://www.owasp.org/index.php/Regular_expression_Denial_of_Service_-_ReDoS\&quot;&gt;https://www.owasp.org/index.php/Regular_expression_Denial_of_Service_-_ReDoS&lt;/a&gt;&lt;/li&gt;\n&lt;li&gt;&lt;a href=\&quot;https://github.com/chjj/marked/issues/497\&quot;&gt;https://github.com/chjj/marked/issues/497&lt;/a&gt; &lt;/li&gt;\n&lt;/ul&gt;\n"
+            |  }
+            |]
+
+        h3.text-left /api/v1/validate/{module-name}/{version-number}
+        p
+          This url returns any vulnerabilities and the list of vulnerable/patched versions for the module. Example data (https://nodesecurity.io/api/v1/validate/serve-static/1.5.4):
+        pre.text-left
+          code
+            |[
+            |  {
+            |    "title":"serve-static Open Redirect",
+            |    "author":"Pierre-Élie Fauché",
+            |    "module_name":"serve-static",
+            |    "publish_date":"Tue Jan 13 2015 14:50:48 GMT-0800 (PST)",
+            |    "cves":[{"name":"CVE-2015-1164",
+            |    "link":"http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-1164"}],
+            |    "vulnerable_versions":"<1.6.5 || >=1.7.0 <1.7.2",
+            |    "patched_versions":"~1.6.5 || >=1.7.2",
+            |    "url":"serve-static-open-redirect"
+            |  }
+            |]
+
+        h3.text-left /api/v1/shrinkwrap
+        p
+          Takes a post request and returns a list of vulnerabilities in the packages contained in the shrinkwrap json file.

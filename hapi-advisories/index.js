@@ -37,6 +37,7 @@ exports.register = function (plugin, options, next) {
     var toc = {};
     var module_index = {};
     var advisories = {};
+    var advisoriesArray = [];
     var advisories_templates = {};
     var advisories_html;
     // Uncomment this to work well (solution till fix the config module)
@@ -108,6 +109,11 @@ exports.register = function (plugin, options, next) {
                 module_index[meta.meta.module_name][meta.meta.publish_date] = meta.meta;
             }
         }
+
+        Object.keys(advisories).forEach(function (key) {
+            advisoriesArray.push(advisories[key]);
+        });
+
         next();
     });
 
@@ -182,6 +188,62 @@ exports.register = function (plugin, options, next) {
         }
     });
 
+    //API routes and handlers
+    //  Some of these are redundant to other areas above
+    //  that is so that there is a unified API for dealing with advisories
+    //  perhaps in the future the above could be superseded by these
+    plugin.route({
+        method: 'GET',
+        path: '/api/v1/validate/{module}/{version}',
+        handler: function (request, reply) {
+            var data = module_index[request.params.module] || {};
+            var result = [];
+            Object.keys(data).forEach(function (key) {
+                var advisory = data[key];
+                if (semver.valid(request.params.version) && semver.satisfies(request.params.version, advisory.vulnerable_versions)) {
+                    result.push(advisory);
+                }
+            });
+            reply(result);
+        }
+    });
+
+    plugin.route({
+        method: 'GET',
+        path: '/api/v1/advisories',
+        handler: function (request, reply) {
+            var filtered,
+                sinceDate;
+
+            if(typeof request.query.since !== 'undefined'){
+                //return advisories since the query param in epoch time
+                sinceDate = new Date(parseInt(request.query.since, 10));
+
+                filtered = advisoriesArray.filter(function (item) {
+                    console.log(new Date(item.meta.publish_date) >= sinceDate);
+                    return (new Date(item.meta.publish_date) >= sinceDate);
+                });
+
+                reply(filtered);
+            } else {
+                //return all the advisories
+                reply(advisoriesArray);
+            }
+        }
+    });
+
+    plugin.route({
+        method: 'POST',
+        path: '/api/v1/validate/shrinkwrap',
+        config: {
+            payload: {
+                allow: 'application/json'
+            }
+        },
+        handler: function (request, reply) {
+            reply(validate(request.payload, module_index));
+        }
+    });
 };
 
 exports.register.attributes = {
